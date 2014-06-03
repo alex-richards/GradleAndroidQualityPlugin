@@ -1,0 +1,10 @@
+allprojects {
+    repositories {
+        mavenCentral()
+    }
+
+    group = 'com.github.alexrichards.gradle'
+    version = '1.0.0.0'
+
+    apply plugin: 'maven'
+}
