@@ -31,9 +31,9 @@ buildscript {
 apply plugin: 'android-quality'
 ```
 
-Now ~~loads of popular Java quality tools~~ FindBugs is added and configured automatically for your project.
+Now ~~loads of popular Java quality tools~~ FindBugs & Checkstyle is added and configured automatically for your project.
 
-You can run it through `check` or `findbugs[buildVariant]`.
+You can run it through `gradle check[buildVarient]` or `gradle {plugin}[buildVarient]`.
 
 ## TODO
 
@@ -45,5 +45,5 @@ You can run it through `check` or `findbugs[buildVariant]`.
   * Apply Plugin
   * Android Config
 * CheckStyle
-  * Apply Plugin
+  * ~~Apply Plugin~~
   * Android Config

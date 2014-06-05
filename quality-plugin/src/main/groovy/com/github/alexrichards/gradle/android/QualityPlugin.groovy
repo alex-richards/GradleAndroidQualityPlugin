@@ -1,6 +1,7 @@
 package com.github.alexrichards.gradle.android
 
 import com.android.build.gradle.AppExtension
+import com.github.alexrichards.gradle.android.plugins.CheckstylePluginConfiguration
 import com.github.alexrichards.gradle.android.plugins.FindBugsPluginConfiguration
 import com.github.alexrichards.gradle.android.plugins.PluginConfiguration
 import org.gradle.api.Plugin
@@ -10,6 +11,7 @@ class QualityPlugin implements Plugin<Project> {
 
   final PluginConfiguration[] pluginConfigurations = [
       new FindBugsPluginConfiguration(),
+      new CheckstylePluginConfiguration(),
   ]
 
   @Override
