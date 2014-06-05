@@ -21,7 +21,7 @@ class FindBugsPluginConfiguration extends PluginConfiguration {
       classpath = variant.javaCompile.classpath
 
       effort = 'max'
-      ignoreFailures = true
+      ignoreFailures = false
       includeFilter = getConfigFile(project, '/config/findbugs.xml')
     }
   }
