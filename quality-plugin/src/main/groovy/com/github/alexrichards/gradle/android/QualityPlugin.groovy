@@ -8,26 +8,27 @@ import com.github.alexrichards.gradle.android.plugins.PluginConfiguration
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 
-class QualityPlugin implements Plugin<Project> {
+public class QualityPlugin implements Plugin<Project> {
 
-  final PluginConfiguration[] pluginConfigurations = [
+  private final PluginConfiguration[] pluginConfigurations = [
       new FindBugsPluginConfiguration(),
       new CheckstylePluginConfiguration(),
-      new PMDPluginConfiguration(),
+//      new PMDPluginConfiguration(),
   ]
 
   @Override
-  void apply(final Project project) {
+  public void apply(final Project project) {
     project.configure(project) {
-      pluginConfigurations.each { PluginConfiguration configuration ->
+      pluginConfigurations.each { final PluginConfiguration configuration ->
         project.apply plugin: configuration.name
+        project.dependencies configuration.dependencies
       }
 
       afterEvaluate {
         final AppExtension android = project.android;
         assert android != null
 
-        pluginConfigurations.each { PluginConfiguration configuration ->
+        pluginConfigurations.each { final PluginConfiguration configuration ->
           configuration.apply project, android
         }
       }

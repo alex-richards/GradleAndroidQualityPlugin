@@ -5,14 +5,14 @@ import com.android.build.gradle.api.ApplicationVariant
 import org.gradle.api.Project
 import org.gradle.api.Task
 
-abstract class PluginConfiguration {
+public abstract class PluginConfiguration<T extends Task> {
 
-  final Class type
+  final Class<T> type
   final String name
   final String formalName
   final String configFile
 
-  PluginConfiguration(final Class type, final String name,
+  public PluginConfiguration(final Class<T> type, final String name,
                       final String formalName, final String configFile) {
     this.type = type
     this.name = name
@@ -20,30 +20,31 @@ abstract class PluginConfiguration {
     this.configFile = configFile
   }
 
-  void apply(final Project project, final AppExtension android) {
-    Task checkTask = project.tasks.check
+  public void apply(final Project project, final AppExtension android) {
+    final Task checkTask = project.tasks.check
 
-    Task configTask = project.task("init${name.capitalize()}", type: Task) << {
-      getConfigFile(project, configFile).withOutputStream { OutputStream out ->
+    final Task configTask = project.task("init${name.capitalize()}", type: Task) << {
+        getFile(project, configFile).withOutputStream { final OutputStream out ->
         out << getClass().getResourceAsStream(configFile)
       }
     }
 
-    Task parentTask = project.task(name, type: Task) { Task task ->
+    final Task parentTask = project.task(name, type: Task) { final Task task ->
       checkTask.dependsOn task
 
-      task.group 'Verification'
-      task.description "Runs ${formalName} on all configurations."
+      task.group = 'Verification'
+      task.description = "Runs ${formalName} on all configurations."
     }
 
-    android.getApplicationVariants().each { ApplicationVariant variant ->
+    android.getApplicationVariants().each { final ApplicationVariant variant ->
       final String taskName = variant.name.capitalize()
 
-      Task variantTask = project.task("${name}${taskName}", type: type) { Task task ->
+      final Task variantTask = project.task("${name}${taskName}", type: type) { final Task task ->
         task.dependsOn variant.javaCompile
         task.dependsOn configTask
-        task.group 'Verification'
-        task.description "Runs ${formalName} on the ${taskName} configuration."
+
+        task.group = 'Verification'
+        task.description = "Runs ${formalName} on the ${taskName} configuration."
 
         task.configure configureTask(project, variant)
       }
@@ -52,10 +53,12 @@ abstract class PluginConfiguration {
     }
   }
 
-  abstract Closure configureTask(Project project, ApplicationVariant variant);
+  public abstract Closure getDependencies()
 
-  File getConfigFile(final Project project, final String name) {
-    File f = new File(project.buildDir, 'androidQualityConfigs' + name);
+  protected abstract Closure configureTask(Project project, ApplicationVariant variant)
+
+  protected static File getFile(final Project project, final String name) {
+    final File f = new File(project.buildDir, 'androidQualityConfigs' + name);
     f.parentFile.mkdirs()
     f.createNewFile()
     return f

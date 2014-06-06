@@ -4,25 +4,33 @@ import com.android.build.gradle.api.ApplicationVariant
 import org.gradle.api.Project
 import org.gradle.api.plugins.quality.Checkstyle
 
-class CheckstylePluginConfiguration extends PluginConfiguration {
+public class CheckstylePluginConfiguration extends PluginConfiguration<Checkstyle> {
 
-  CheckstylePluginConfiguration() {
-    super(Checkstyle, 'checkstyle', 'Checkstyle', '/config/checkstyle.xml')
+  public CheckstylePluginConfiguration() {
+    super(Checkstyle.class, 'checkstyle', 'Checkstyle', '/config/checkstyle.xml')
   }
 
   @Override
-  Closure configureTask(final Project project, final ApplicationVariant variant) {
+  public Closure getDependencies(){
     return {
-      configFile getConfigFile(project, '/config/checkstyle.xml')
+      checkstyle 'com.puppycrawl.tools:checkstyle:5.7'
+    }
+  }
 
-      source variant.javaCompile.source.files
-      classpath = variant.javaCompile.classpath
+  @Override
+  protected Closure configureTask(final Project project, final ApplicationVariant variant) {
+    final File myConfigFile = getFile(project, configFile)
+    return { final Checkstyle checkstyle ->
+      checkstyle.configFile = myConfigFile
 
-      include '**/*.java'
-      exclude '**/R.java'
+      checkstyle.source = variant.javaCompile.source.files
+      checkstyle.classpath = variant.javaCompile.classpath
 
-      ignoreFailures false
-      showViolations false
+      checkstyle.include '**/*.java'
+      checkstyle.exclude '**/R.java', "**/BuildConfig.java"
+
+      checkstyle.ignoreFailures = false
+      checkstyle.showViolations = false
     }
   }
 }

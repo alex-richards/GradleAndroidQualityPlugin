@@ -4,25 +4,34 @@ import com.android.build.gradle.api.ApplicationVariant
 import org.gradle.api.Project
 import org.gradle.api.plugins.quality.FindBugs
 
-class FindBugsPluginConfiguration extends PluginConfiguration {
+public class FindBugsPluginConfiguration extends PluginConfiguration<FindBugs> {
 
-  FindBugsPluginConfiguration() {
-    super(FindBugs, 'findbugs', 'FindBugs', '/config/findbugs.xml')
+  public FindBugsPluginConfiguration() {
+    super(FindBugs.class, 'findbugs', 'FindBugs', '/config/findbugs.xml')
   }
 
   @Override
-  Closure configureTask(final Project project, final ApplicationVariant variant) {
+  public Closure getDependencies(){
     return {
-      classes = project.fileTree(variant.javaCompile.destinationDir, {
+      findbugs 'com.google.code.findbugs:findbugs:2.0.3'
+    }
+  }
+
+  @Override
+  protected Closure configureTask(final Project project, final ApplicationVariant variant) {
+    final File myConfigFile = getFile(project, configFile)
+    return { final FindBugs findBugs ->
+      findBugs.classes = project.fileTree(variant.javaCompile.destinationDir, {
         include '**/*.class'
         exclude '**/R.class', '**/R$*.class'
       })
-      source = variant.javaCompile.source.files
-      classpath = variant.javaCompile.classpath
 
-      effort = 'max'
-      ignoreFailures = false
-      includeFilter = getConfigFile(project, '/config/findbugs.xml')
+      findBugs.source = variant.javaCompile.source.files
+      findBugs.classpath = variant.javaCompile.classpath
+
+      findBugs.effort = 'max'
+      findBugs.ignoreFailures = false
+      findBugs.includeFilter = myConfigFile
     }
   }
 }

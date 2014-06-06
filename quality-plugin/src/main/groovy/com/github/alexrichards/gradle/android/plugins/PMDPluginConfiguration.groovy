@@ -4,13 +4,18 @@ import com.android.build.gradle.api.ApplicationVariant
 import org.gradle.api.Project
 import org.gradle.api.plugins.quality.Pmd
 
-class PMDPluginConfiguration extends PluginConfiguration {
+public class PMDPluginConfiguration extends PluginConfiguration<Pmd> {
 
   PMDPluginConfiguration() {
     super(Pmd, 'pmd', 'PMD', '/config/pmd.xml')
   }
 
-  @Override
+    @Override
+    public Closure getDependencies() {
+        return {}
+    }
+
+    @Override
   Closure configureTask(final Project project, final ApplicationVariant variant) {
     return {
 //      ruleSetFiles = project.files(getConfigFile(project, '/config/pmd.xml'))
