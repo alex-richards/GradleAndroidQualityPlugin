@@ -6,48 +6,55 @@ import org.gradle.api.plugins.quality.Pmd
 
 public class PMDPluginConfiguration extends PluginConfiguration<Pmd> {
 
-  PMDPluginConfiguration() {
+  public PMDPluginConfiguration() {
     super(Pmd, 'pmd', 'PMD', '/config/pmd.xml')
   }
 
-    @Override
-    public Closure getDependencies() {
-        return {}
-    }
-
-    @Override
-  Closure configureTask(final Project project, final ApplicationVariant variant) {
+  @Override
+  public Closure getDependencies() {
     return {
-//      ruleSetFiles = project.files(getConfigFile(project, '/config/pmd.xml'))
+      pmd 'net.sourceforge.pmd:pmd:5.1.1'
+    }
+  }
 
-      ruleSets = [
-          "basic",
-          "braces",
-          "naming",
-          "android",
-          "clone",
-          "codesize",
-          "controversial",
-          "design",
-          "finalizers",
-          "imports",
-          "j2ee",
-          "javabeans",
-          "junit",
-          "logging-jakarta-commons",
-          "logging-java",
-          "migrating",
-          "optimizations",
-          "strictexception",
-          "strings",
-          "sunsecure",
-          "typeresolution",
-          "unusedcode"
-      ]
-      source = variant.javaCompile.source
-      ignoreFailures = true
+    @Override
+  protected Closure configureTask(final Project project, final ApplicationVariant variant) {
+    return { final Pmd pmd ->
+      // TODO why can't I configure this ??
+      // pmd.ruleSetFiles = project.files(getFile(project, configFile))
+      /*pmd.ruleSets = [
+        "basic",
+        "braces",
+        "naming",
+        "android",
+        "clone",
+        "codesize",
+        "controversial",
+        "design",
+        "finalizers",
+        "imports",
+        "javabeans",
+        "junit",
+        "migrating",
+        "optimizations",
+        "strictexception",
+        "strings",
+        "sunsecure",
+        "typeresolution",
+        "unusedcode",
+      ]*/
 
-      exclude '**/R.java', '**/BuildConfig.java'
+      pmd.source = variant.javaCompile.source
+      pmd.ignoreFailures = false
+
+      pmd.exclude '**/R.java', '**/BuildConfig.java'
+
+      pmd.pmdClasspath = project.configurations.pmd
+
+      pmd.reports {
+        xml.enabled = true
+        html.enabled = false
+      }
     }
   }
 }

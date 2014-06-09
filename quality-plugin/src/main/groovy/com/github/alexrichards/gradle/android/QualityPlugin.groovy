@@ -13,7 +13,7 @@ public class QualityPlugin implements Plugin<Project> {
   private final PluginConfiguration[] pluginConfigurations = [
       new FindBugsPluginConfiguration(),
       new CheckstylePluginConfiguration(),
-//      new PMDPluginConfiguration(),
+      new PMDPluginConfiguration(),
   ]
 
   @Override
